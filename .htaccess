@@ -1,0 +1,42 @@
+Options -Indexes
+ServerSignature Off
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^ https://undangan.dutaquran.id%{REQUEST_URI} [R=301,L]
+
+  RewriteRule ^(data|storage|tests|tools|node_modules|package(?:-lock)?\.json|api/lib|config(?:\.sample)?\.php|setup\.php|\.env|router\.php)(/|$) - [F,L]
+  RewriteRule (^|/)\. - [F,L]
+
+  RewriteRule ^(masuk|login|daftar|register|panel|dashboard|lupa-password|reset-password)/?$ portal.php [L,QSA]
+  RewriteRule ^admin(/(index|dashboard)\.html)?/?$ portal.php [L,QSA]
+  RewriteRule ^tamu/[0-9]+\.[a-f0-9]{64}/?$ guest.php [L,QSA]
+
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^u/([^/]+)/?$ index.html?tier=registered&to=$1 [L,QSA]
+
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^vip/([^/]+)/?$ index.html?tier=vip&to=$1 [L,QSA]
+
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^api/(.*)$ api/index.php?__path=$1 [QSA,L]
+
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^[a-z0-9][a-z0-9-]{1,180}/?$ index.html [L,QSA]
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(self), microphone=(), geolocation=()"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com data:; img-src 'self' data: blob:; media-src 'self'; connect-src 'self'; frame-ancestors 'self'"
+</IfModule>
+
+<FilesMatch "\.(ini|log|sqlite|zip|bak|map)$">
+ Require all denied
+</FilesMatch>
